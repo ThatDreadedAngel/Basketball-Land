@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Empire Basketball League</title>
+<style>
+:root{--bg:#090d18;--panel:#131c2e;--line:#293956;--gold:#ffd166;--text:#f3f6ff;--muted:#9fb0ca;--red:#ef476f;--blue:#118ab2}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172743,#090d18 65%);color:var(--text);font-family:ui-monospace,SFMono-Regular,Consolas,monospace;image-rendering:pixelated}
+header{padding:20px 16px 14px;text-align:center;border-bottom:2px solid var(--line);background:#0b1120}
+.logo{font-weight:1000;letter-spacing:3px;color:var(--gold);font-size:clamp(22px,4vw,38px);text-shadow:3px 3px #703b20}.sub{color:var(--muted);font-size:12px;margin-top:7px}
+nav{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:12px}
+button,select{font:inherit;border:2px solid var(--line);background:#17243a;color:var(--text);padding:10px 12px;cursor:pointer;border-radius:5px}
+button:hover,button.active{border-color:var(--gold);color:var(--gold)}button.primary{background:var(--gold);color:#101523;border-color:var(--gold);font-weight:bold}
+main{max-width:1150px;margin:auto;padding:12px}.view{display:none}.view.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.panel{background:linear-gradient(145deg,#17243a,#101827);border:2px solid var(--line);border-radius:8px;padding:14px;box-shadow:0 5px 0 #050811}
+.teamcard{cursor:pointer;transition:.12s}.teamcard:hover{transform:translateY(-2px);border-color:var(--gold)}.teamhead{display:flex;align-items:center;gap:10px}.mark{width:42px;height:42px;display:grid;place-items:center;background:var(--team,#ffd166);color:#101523;font-weight:1000;border:3px solid #fff;border-radius:5px;font-size:13px}.teamname{font-size:14px;font-weight:bold}.muted{color:var(--muted);font-size:12px}.rating{color:var(--gold);font-weight:bold}.bar{height:7px;background:#28354c;margin-top:8px;border-radius:4px;overflow:hidden}.bar span{display:block;height:100%;background:var(--gold)}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.toolbar select{max-width:100%}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:9px 7px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-size:11px;text-transform:uppercase}tr:hover td{background:#1c2b43}.pos{color:#8dd7ff}.teamtitle{font-size:22px;color:var(--gold);margin:4px 0 14px}
+.game-layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:12px}.courtwrap{padding:8px;background:#0b1320;border:2px solid var(--line);border-radius:8px}.scoreboard{display:flex;justify-content:space-around;align-items:center;text-align:center;padding:10px;background:#080c14;margin-bottom:8px;border:1px solid #293956}.score{font-size:28px;font-weight:bold;color:var(--gold)}.court{width:100%;display:block;background:#d5a05b;border:4px solid #f8d9a1;image-rendering:pixelated;touch-action:none}.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}.controls button{padding:13px 4px;font-size:12px}.log{height:120px;overflow:auto;font-size:11px;line-height:1.6;color:var(--muted);background:#080c14;padding:9px;border:1px solid var(--line);margin-top:8px}.statline{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);font-size:12px}
+footer{text-align:center;color:#637794;padding:25px;font-size:11px}
+@media(max-width:800px){.game-layout{grid-template-columns:1fr}.court{max-height:55vh}.score{font-size:22px}}
+</style>
+</head>
+<body>
+<header><div class="logo">EMPIRE BASKETBALL</div><div class="sub">PIXEL COURT • 16 TEAMS • 160 PLAYERS • YOUR LEAGUE</div></header>
+<nav>
+<button class="active" data-view="league">LEAGUE</button><button data-view="rosters">ROSTERS</button><button data-view="play">PLAY GAME</button><button data-view="standings">STANDINGS</button>
+</nav>
+<main>
+<section id="league" class="view active"><div class="toolbar"><input id="searchTeam" placeholder="Search teams..." style="font:inherit;padding:10px;background:#101827;border:2px solid var(--line);color:white;border-radius:5px;flex:1;min-width:180px"><span class="muted">SELECT A TEAM TO VIEW ITS ROSTER</span></div><div id="teamGrid" class="grid"></div></section>
+<section id="rosters" class="view"><div class="toolbar"><label for="teamSelect">TEAM</label><select id="teamSelect"></select><button id="backLeague">ALL TEAMS</button></div><div id="rosterContent" class="panel"></div></section>
+<section id="play" class="view"><div class="toolbar"><label>HOME</label><select id="homeTeam"></select><label>AWAY</label><select id="awayTeam"></select><label>TIME</label><select id="gameLength"><option value="1">1 min</option><option value="3">3 min</option><option value="5" selected>5 min</option><option value="8">8 min</option><option value="12">12 min</option></select><button class="primary" id="startGame">START / RESET</button></div>
+<div class="game-layout"><div class="courtwrap"><div class="scoreboard"><div><div id="homeShort">NYE</div><div id="homeScore" class="score">0</div></div><div><div class="muted">QUARTER 1</div><div id="clock" class="score" style="font-size:20px">5:00</div><div class="muted" id="status">READY</div></div><div><div id="awayShort">CAG</div><div id="awayScore" class="score">0</div></div></div><canvas id="court" class="court" width="720" height="420" aria-label="Pixel basketball court"></canvas>
+<div class="controls"><button id="up">▲ MOVE</button><button id="pass">PASS [P]</button><button id="shoot" class="primary">SHOOT [SPACE]</button><button id="left">◀ LEFT</button><button id="down">▼ MOVE</button><button id="right">RIGHT ▶</button><button id="steal">STEAL [S]</button><button id="switch">SWITCH [TAB]</button><button id="restartPoss">NEW PLAY</button></div><div class="muted" style="margin-top:8px">Keyboard: WASD/arrow keys move • Space shoots • P passes • S steals • Tab switches player. Score by moving near the hoop and shooting.</div></div>
+<aside class="panel"><div class="teamtitle" style="font-size:17px">GAME HUD</div><div class="statline"><span>POSSESSION</span><b id="possText">HOME</b></div><div class="statline"><span>CONTROLLED</span><b id="playerText">Jace Holloway</b></div><div class="statline"><span>POSITION</span><b id="posText">PG</b></div><div class="statline"><span>RATING</span><b class="rating" id="ratingText">96</b></div><div class="statline"><span>TEAM OVR</span><b id="teamOvr">85</b></div><div class="teamtitle" style="font-size:15px;margin-top:16px">PLAY-BY-PLAY</div><div id="gameLog" class="log">Welcome to Empire Basketball. Start a game to tip off!</div><button id="simPoss" style="width:100%;margin-top:8px">SIMULATE POSSESSION</button></aside></div></section>
+<section id="standings" class="view"><div class="panel"><div class="teamtitle">LEAGUE STANDINGS</div><div class="muted" style="margin-bottom:12px">Wins and losses update when you finish a game.</div><div style="overflow:auto"><table><thead><tr><th>#</th><th>Team</th><th>W</th><th>L</th><th>PF</th><th>PA</th><th>Roster OVR</th></tr></thead><tbody id="standingsBody"></tbody></table></div></div></section>
+</main><footer>EMPIRE BASKETBALL LEAGUE • ORIGINAL FAN-MADE BASKETBALL GAME</footer>
+<script src="game.js"></script>
+</body></html>
